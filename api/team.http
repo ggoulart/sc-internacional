@@ -1,0 +1,10 @@
+### Create a team
+POST http://localhost:8080/teams
+Content-Type: application/json
+
+{
+  "name": "Internacional",
+  "fullName": "Sport Club Internacional",
+  "website": "internacional.com.br",
+  "foundationDate": "1909-04-04T00:00:00Z"
+}
