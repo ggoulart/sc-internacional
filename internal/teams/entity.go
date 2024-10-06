@@ -3,7 +3,7 @@ package teams
 import "time"
 
 type Team struct {
-	Id             string    `json:"id,omitempty"`
+	Id             string    `json:"id,omitempty" bson:"_id,omitempty"`
 	Name           string    `json:"name" binding:"required"`
 	FullName       string    `json:"fullName" binding:"required"`
 	Website        string    `json:"website" binding:"required"`

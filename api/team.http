@@ -8,3 +8,8 @@ Content-Type: application/json
   "website": "internacional.com.br",
   "foundationDate": "1909-04-04T00:00:00Z"
 }
+
+> {% client.global.set("team_id", response.body.id); %}
+
+### Get a team
+GET http://localhost:8080/teams/{team_id}

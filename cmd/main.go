@@ -12,7 +12,6 @@ import (
 func main() {
 	r := gin.Default()
 
-	log.Println("log 1")
 	//TODO: refactor this mongo block
 	config, err := mongodb.NewConfig()
 	if err != nil {
@@ -35,5 +34,7 @@ func main() {
 
 func routers(r *gin.Engine, controllerTeam *teams.Controller) {
 	r.POST("/teams", controllerTeam.PostTeam)
+	r.GET("/teams/:id", controllerTeam.GetTeam)
+
 	r.GET("/", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"message": "VAMO COLORADO!!"}) })
 }

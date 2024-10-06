@@ -2,6 +2,7 @@ package teams
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -27,7 +28,12 @@ func (r Repository) createTeam(ctx context.Context, team Team) (Team, error) {
 
 func (r Repository) getTeam(ctx context.Context, id string) (Team, error) {
 	var team Team
-	err := r.collection.FindOne(ctx, primitive.M{"_id": id}).Decode(&team)
+	docID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return Team{}, err
+	}
+
+	err = r.collection.FindOne(ctx, bson.M{"_id": docID}).Decode(&team)
 	if err != nil {
 		return Team{}, err
 	}
