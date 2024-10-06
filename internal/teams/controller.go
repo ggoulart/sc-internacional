@@ -2,12 +2,14 @@ package teams
 
 import (
 	"context"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type service interface {
 	createTeam(ctx context.Context, team Team) (Team, error)
+	getTeam(ctx context.Context, id string) (Team, error)
 }
 
 type Controller struct {
@@ -32,6 +34,21 @@ func (c Controller) PostTeam(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, team)
+}
+
+func (c Controller) GetTeam(ctx *gin.Context) {
+	team, err := c.service.getTeam(ctx.Request.Context(), ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	if team == (Team{}) {
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("team not found")))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, team)
 }
 
 func errorResponse(err error) gin.H {
