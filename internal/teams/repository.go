@@ -24,3 +24,13 @@ func (r Repository) createTeam(ctx context.Context, team Team) (Team, error) {
 
 	return team, nil
 }
+
+func (r Repository) getTeam(ctx context.Context, id string) (Team, error) {
+	var team Team
+	err := r.collection.FindOne(ctx, primitive.M{"_id": id}).Decode(&team)
+	if err != nil {
+		return Team{}, err
+	}
+
+	return team, nil
+}
