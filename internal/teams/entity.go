@@ -9,3 +9,7 @@ type Team struct {
 	Website        string    `json:"website" binding:"required"`
 	FoundationDate time.Time `json:"foundationDate" binding:"required"`
 }
+
+func (t *Team) isEmpty() bool {
+	return t.Id == "" && t.Name == "" && t.FullName == "" && t.Website == "" && t.FoundationDate == time.Time{}
+}

@@ -10,6 +10,7 @@ import (
 type service interface {
 	createTeam(ctx context.Context, team Team) (Team, error)
 	getTeam(ctx context.Context, id string) (Team, error)
+	getAllTeams(ctx context.Context) ([]Team, error)
 }
 
 type Controller struct {
@@ -43,12 +44,22 @@ func (c Controller) GetTeam(ctx *gin.Context) {
 		return
 	}
 
-	if team == (Team{}) {
+	if team.isEmpty() {
 		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("team not found")))
 		return
 	}
 
 	ctx.JSON(http.StatusOK, team)
+}
+
+func (c Controller) GetAllTeams(ctx *gin.Context) {
+	teams, err := c.service.getAllTeams(ctx.Request.Context())
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, teams)
 }
 
 func errorResponse(err error) gin.H {

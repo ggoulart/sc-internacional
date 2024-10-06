@@ -1,5 +1,5 @@
 ### Create a team
-POST http://localhost:8080/teams
+POST {{host}}/teams
 Content-Type: application/json
 
 {
@@ -12,4 +12,7 @@ Content-Type: application/json
 > {% client.global.set("team_id", response.body.id); %}
 
 ### Get a team
-GET http://localhost:8080/teams/{team_id}
+GET {{host}}/teams/6702d8318c2dc4e05baf5c86
+
+### Get All teams
+GET {{host}}/teams

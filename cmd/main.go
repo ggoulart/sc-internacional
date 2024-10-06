@@ -35,6 +35,6 @@ func main() {
 func routers(r *gin.Engine, controllerTeam *teams.Controller) {
 	r.POST("/teams", controllerTeam.PostTeam)
 	r.GET("/teams/:id", controllerTeam.GetTeam)
-
+	r.GET("/teams", controllerTeam.GetAllTeams)
 	r.GET("/", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"message": "VAMO COLORADO!!"}) })
 }

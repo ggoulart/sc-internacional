@@ -5,6 +5,7 @@ import "context"
 type repository interface {
 	createTeam(ctx context.Context, team Team) (Team, error)
 	getTeam(ctx context.Context, id string) (Team, error)
+	getAllTeams(ctx context.Context) ([]Team, error)
 }
 
 type Service struct {
@@ -31,4 +32,13 @@ func (s Service) getTeam(ctx context.Context, id string) (Team, error) {
 	}
 
 	return team, nil
+}
+
+func (s Service) getAllTeams(ctx context.Context) ([]Team, error) {
+	teams, err := s.repository.getAllTeams(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return teams, nil
 }

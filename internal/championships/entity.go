@@ -1,10 +1,14 @@
 package championships
 
-import "time"
+import "sc-internacional/internal/teams"
 
 type Championship struct {
-	Id        string    `json:"id,omitempty"`
-	Name      string    `json:"name" binding:"required"`
-	StartDate time.Time `json:"startDate" binding:"required"`
-	EndDate   time.Time `json:"endDate" binding:"required"`
+	Id     string       `json:"id,omitempty"`
+	Name   string       `json:"name" binding:"required"`
+	Season string       `json:"season" binding:"required"`
+	Teams  []teams.Team `json:"teams" binding:"required"`
+}
+
+func (c *Championship) isEmpty() bool {
+	return c.Id == "" && c.Name == "" && c.Season == "" && len(c.Teams) == 0
 }

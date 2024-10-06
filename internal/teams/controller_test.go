@@ -130,6 +130,49 @@ func TestController_GetTeam(t *testing.T) {
 	}
 }
 
+func TestController_GetAllTeams(t *testing.T) {
+	tests := []struct {
+		name               string
+		setup              func(*serviceMock)
+		expectedStatusCode int
+		expectedBody       string
+	}{
+		{
+			name: "when failed to get all teams",
+			setup: func(s *serviceMock) {
+				s.On("getAllTeams", mock.Anything).Return([]Team{}, errors.New("failed to get teams"))
+			},
+			expectedStatusCode: http.StatusInternalServerError,
+			expectedBody:       "{\"error\":\"failed to get teams\"}",
+		},
+		{
+			name: "when successfully got all teams",
+			setup: func(s *serviceMock) {
+				s.On("getAllTeams", mock.Anything).Return([]Team{}, nil)
+			},
+			expectedStatusCode: http.StatusOK,
+			expectedBody:       "[]",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &serviceMock{}
+			tt.setup(s)
+
+			c := NewController(s)
+
+			recorder := httptest.NewRecorder()
+			ctx, _ := gin.CreateTestContext(recorder)
+			ctx.Request = &http.Request{Header: make(http.Header)}
+
+			c.GetAllTeams(ctx)
+
+			assert.Equal(t, tt.expectedStatusCode, recorder.Code)
+			assert.Equal(t, tt.expectedBody, recorder.Body.String())
+		})
+	}
+}
+
 type serviceMock struct {
 	service
 	mock.Mock
@@ -145,4 +188,10 @@ func (m *serviceMock) getTeam(ctx context.Context, id string) (Team, error) {
 	args := m.Called(ctx, id)
 
 	return args.Get(0).(Team), args.Error(1)
+}
+
+func (m *serviceMock) getAllTeams(ctx context.Context) ([]Team, error) {
+	args := m.Called(ctx)
+
+	return args.Get(0).([]Team), args.Error(1)
 }

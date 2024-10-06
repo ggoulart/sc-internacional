@@ -40,3 +40,20 @@ func (r Repository) getTeam(ctx context.Context, id string) (Team, error) {
 
 	return team, nil
 }
+
+func (r Repository) getAllTeams(ctx context.Context) ([]Team, error) {
+	cursor, err := r.collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var teams []Team
+
+	err = cursor.All(ctx, &teams)
+	if err != nil {
+		return nil, err
+	}
+
+	return teams, nil
+}
