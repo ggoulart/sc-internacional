@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func TestService_CreateTeam(t *testing.T) {
+func TestService_createTeam(t *testing.T) {
 	tests := []struct {
 		name    string
 		setup   func(r *repositoryMock)
@@ -54,7 +54,7 @@ func TestService_CreateTeam(t *testing.T) {
 	}
 }
 
-func TestService_GetTeamById(t *testing.T) {
+func TestService_getTeamById(t *testing.T) {
 	tests := []struct {
 		name    string
 		setup   func(r *repositoryMock)

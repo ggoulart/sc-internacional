@@ -5,18 +5,25 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Repository struct {
-	collection *mongo.Collection
+type db interface {
+	InsertOne(ctx context.Context, document interface{}, opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error)
+	FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) *mongo.SingleResult
+	Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (cur *mongo.Cursor, err error)
 }
 
-func NewRepository(database *mongo.Database) *Repository {
-	return &Repository{collection: database.Collection("teams")}
+type Repository struct {
+	db
+}
+
+func NewRepository(db db) *Repository {
+	return &Repository{db}
 }
 
 func (r Repository) createTeam(ctx context.Context, team Team) (Team, error) {
-	result, err := r.collection.InsertOne(ctx, team)
+	result, err := r.db.InsertOne(ctx, team)
 	if err != nil {
 		return Team{}, err
 	}
@@ -33,7 +40,7 @@ func (r Repository) getTeam(ctx context.Context, id string) (Team, error) {
 		return Team{}, err
 	}
 
-	err = r.collection.FindOne(ctx, bson.M{"_id": docID}).Decode(&team)
+	err = r.db.FindOne(ctx, bson.M{"_id": docID}).Decode(&team)
 	if err != nil {
 		return Team{}, err
 	}
@@ -42,9 +49,9 @@ func (r Repository) getTeam(ctx context.Context, id string) (Team, error) {
 }
 
 func (r Repository) getAllTeams(ctx context.Context) ([]Team, error) {
-	cursor, err := r.collection.Find(ctx, bson.M{})
+	cursor, err := r.db.Find(ctx, bson.M{})
 	if err != nil {
-		return nil, err
+		return []Team{}, err
 	}
 	defer cursor.Close(ctx)
 
@@ -52,7 +59,7 @@ func (r Repository) getAllTeams(ctx context.Context) ([]Team, error) {
 
 	err = cursor.All(ctx, &teams)
 	if err != nil {
-		return nil, err
+		return []Team{}, err
 	}
 
 	return teams, nil
